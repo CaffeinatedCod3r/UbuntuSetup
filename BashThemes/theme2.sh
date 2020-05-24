@@ -62,20 +62,35 @@ fi
 set_ps1_theme()
 {
     local dir_name=${PWD}
-    local dir_sep=$' \033[0;38;5;194m\033[0;7;38;5;194m '
-    local dir_fmt=$'\033[7;38;5;194m'
-    local usr_fmt=$'\033[0;m'
-    local inp_fmt=$'\033[0;1;38;5;87m'
-    local my_ps1=$'\033[0;7;38;5;194m '
-    # TODO
-    # wrap dir name for level after 4
-    # https://linuxconfig.org/how-to-use-arrays-in-bash-script
-    
-    for folder in $(IFS='/';echo $dir_name); do 
-        my_ps1+=${dir_fmt}${folder}${dir_sep}
+    local dir_sep=$' \001\033[0;38;5;194m\002\001\033[0;7;38;5;194m\002 '
+    local dir_fmt=$'\001\033[0;7;38;5;194m\002'
+    local usr_fmt=$'\001\033[0;m\002'
+    local inp_fmt=$'\001\033[0;38;5;87m\002'
+    local my_ps1=$'\001\033[0;7;38;5;194m\002'
+    local arr=()
+    local folders=()
+
+    IFS="/" read -ra arr <<< "$dir_name"
+    unset 'arr[0]'
+    local len=${#arr[@]}
+
+    if [ "$len" -eq "0" ]; then
+        folders+=(ROOT)
+    elif [ "$len" -gt "4" ]; then
+        IFS=";"
+        folders+=(${arr[1]})
+        folders+=(${arr[2]})
+        folders+=($"...")
+        folders+=(${arr[-2]})
+        folders+=(${arr[-1]})
+    else
+        folders=("${arr[@]}") 
+    fi
+
+    for i in "${folders[@]}"; do 
+        my_ps1+=${dir_fmt}"$i"${dir_sep}
     done
     my_ps1=${my_ps1::-2}
-    # my_ps1+=' '
     my_ps1+=${usr_fmt}$' $ '${inp_fmt}
     echo "$my_ps1"
 }
