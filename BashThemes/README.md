@@ -3,7 +3,9 @@
 ## Theme 1
 
 ![Theme 1 without ellipsis](https://i.imgur.com/MFfCEJ3.png)
+
 **Ellipsis after level 4.**
+
 ![Theme 1 with ellipsis](https://imgur.com/5bUcN6R.png)
 
 ## Theme 2
